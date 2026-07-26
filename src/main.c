@@ -101,6 +101,13 @@ void compararAlgoritmosOrdenamiento(int n, int caso) {
         (double)(finQuickSort - inicioQuickSort) / CLOCKS_PER_SEC;
 
     printf("QuickSort: %f segundos\n", tiempoQuickSort);
+
+    free(original);
+    free(arrBurbujeo);
+    free(arrSeleccion);
+    free(arrInsercion);
+    free(arrShell);
+    free(arrQuickSort);
 }
 
 int main(int argc, char *argv[]) {

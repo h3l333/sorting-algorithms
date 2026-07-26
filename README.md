@@ -1,3 +1,5 @@
+![CI](https://github.com/h3l333/sorting-algorithms/actions/workflows/ci.yml/badge.svg)
+
 # Sorting Algorithms Benchmark
 
 A C project that implements and compares five classic sorting algorithms under best-case, average-case, and worst-case input arrangements.
@@ -6,13 +8,13 @@ The goal is to connect algorithmic complexity with measured runtime behaviour. T
 
 ## Algorithms
 
-| Algorithm | Best case | Average case | Worst case | Stable | In-place |
-| --- | ---: | ---: | ---: | :---: | :---: |
-| Bubble sort | O(n^2) | O(n^2) | O(n^2) | Yes | Yes |
-| Selection sort | O(n^2) | O(n^2) | O(n^2) | No | Yes |
-| Insertion sort | O(n) | O(n^2) | O(n^2) | Yes | Yes |
-| Shell sort* | Depends on gap sequence | Depends on gap sequence | Depends on gap sequence | No | Yes |
-| QuickSort (last-element pivot) | O(n log n) | O(n log n) | O(n^2) | No | Yes |
+| Algorithm                      |               Best case |            Average case |              Worst case | Stable | In-place |
+| ------------------------------ | ----------------------: | ----------------------: | ----------------------: | :----: | :------: |
+| Bubble sort                    |                  O(n^2) |                  O(n^2) |                  O(n^2) |  Yes   |   Yes    |
+| Selection sort                 |                  O(n^2) |                  O(n^2) |                  O(n^2) |   No   |   Yes    |
+| Insertion sort                 |                    O(n) |                  O(n^2) |                  O(n^2) |  Yes   |   Yes    |
+| Shell sort\*                   | Depends on gap sequence | Depends on gap sequence | Depends on gap sequence |   No   |   Yes    |
+| QuickSort (last-element pivot) |              O(n log n) |              O(n log n) |                  O(n^2) |   No   |   Yes    |
 
 \* This implementation uses a halving gap sequence. Shell sort complexity depends on both the sequence of gaps and the input, so the report treats its worst-case input as an experimental approximation.
 
@@ -21,7 +23,8 @@ The goal is to connect algorithmic complexity with measured runtime behaviour. T
 ```text
 include/    Public function declarations
 src/        Sorting algorithms, utilities, and benchmark program
-tests/      Small utility-generator test program
+tests/      Utility-generator check and sorting correctness tests
+.github/    GitHub Actions CI workflow
 bin/        Build output (generated; ignored by Git)
 Análisis de algoritmos de ordenamiento.pdf
             Full report: methodology, results, charts, and conclusions
@@ -54,7 +57,7 @@ Shell: 0.000280 segundos
 QuickSort: 0.000220 segundos
 ```
 
-Run the utility-generator check:
+Run the test suite (utility-generator check plus sorting correctness tests covering all five algorithms):
 
 ```bash
 make test
@@ -70,13 +73,13 @@ make clean
 
 The complete measurement tables and charts are available in [the report](<Análisis de algoritmos de ordenamiento.pdf>). The table below highlights the random-input run at `n = 150,000`.
 
-| Algorithm | Time (seconds) |
-| --- | ---: |
-| Bubble sort | 88.994592 |
-| Selection sort | 23.829920 |
-| Insertion sort | 13.448955 |
-| Shell sort | 0.037259 |
-| QuickSort | 0.020236 |
+| Algorithm      | Time (seconds) |
+| -------------- | -------------: |
+| Bubble sort    |      88.994592 |
+| Selection sort |      23.829920 |
+| Insertion sort |      13.448955 |
+| Shell sort     |       0.037259 |
+| QuickSort      |       0.020236 |
 
 ```mermaid
 xychart-beta
@@ -95,6 +98,23 @@ The chart intentionally focuses on Shell sort and QuickSort: plotting all algori
 - Insertion sort is extremely effective on already sorted input, but degrades on random or reverse-ordered arrays.
 - QuickSort is fastest on average with balanced partitions, but choosing the final element as the pivot exposes its quadratic worst case on ordered input.
 - Shell sort was consistently fast in these experiments, while its theoretical worst-case behaviour remains dependent on the selected gap sequence.
+
+## Known limitations
+
+**QuickSort recursion depth on the worst-case input.** This is separate from the O(n^2) _time_ growth documented above and in the report- it's about _stack memory_, not CPU time.
+
+With the last element as pivot, an already-sorted or reverse-sorted array (exactly the worst-case construction used for `caso 3`) produces maximally unbalanced partitions at every step. Instead of the O(log n) recursion depth QuickSort normally achieves, this implementation recurses n levels deep, using stack space linearly in n.
+
+In practice this means the amount of stack space available matters:
+
+| Stack size                                                                   | `./bin/main 3` at n = 150,000                      |
+| ---------------------------------------------------------------------------- | -------------------------------------------------- |
+| 8 MB (typical Linux/WSL default- what this project's report was measured on) | Completes normally                                 |
+| 1 MB (Windows' default thread stack)                                         | Crashes with a stack overflow (segmentation fault) |
+
+So the timings in the report and README are unaffected- they were produced on WSL, comfortably within the 8 MB default. But the 8 MB case isn't a large margin either, and the same worst-case input would reliably crash a build run natively on Windows (outside WSL) rather than merely running slower.
+
+The standard fix is to recurse into the smaller partition and loop over the larger one, which bounds the recursion depth to O(log n) regardless of input order- left as a possible follow-up rather than applied here, since it would change the implementation being measured.
 
 ## Reproducing the original compilation command
 
