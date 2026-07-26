@@ -1,0 +1,107 @@
+# Sorting Algorithms Benchmark
+
+A C project that implements and compares five classic sorting algorithms under best-case, average-case, and worst-case input arrangements.
+
+The goal is to connect algorithmic complexity with measured runtime behaviour. The project includes a technical report written in Spanish with methodology, timing tables for a single series of executions, charts, and conclusions.
+
+## Algorithms
+
+| Algorithm | Best case | Average case | Worst case | Stable | In-place |
+| --- | ---: | ---: | ---: | :---: | :---: |
+| Bubble sort | O(n^2) | O(n^2) | O(n^2) | Yes | Yes |
+| Selection sort | O(n^2) | O(n^2) | O(n^2) | No | Yes |
+| Insertion sort | O(n) | O(n^2) | O(n^2) | Yes | Yes |
+| Shell sort* | Depends on gap sequence | Depends on gap sequence | Depends on gap sequence | No | Yes |
+| QuickSort (last-element pivot) | O(n log n) | O(n log n) | O(n^2) | No | Yes |
+
+\* This implementation uses a halving gap sequence. Shell sort complexity depends on both the sequence of gaps and the input, so the report treats its worst-case input as an experimental approximation.
+
+## Project layout
+
+```text
+include/    Public function declarations
+src/        Sorting algorithms, utilities, and benchmark program
+tests/      Small utility-generator test program
+bin/        Build output (generated; ignored by Git)
+Análisis de algoritmos de ordenamiento.pdf
+            Full report: methodology, results, charts, and conclusions
+```
+
+## Requirements
+
+- A C compiler with C11 support, such as GCC or Clang
+- GNU Make
+
+The commands below are written for Linux, macOS, or WSL. On Windows, WSL is the simplest way to use the provided Makefile.
+
+## Build and run
+
+```bash
+make
+./bin/main 1  # best case
+./bin/main 2  # average/random case
+./bin/main 3  # worst case
+```
+
+Example output (times vary by computer):
+
+```text
+Caso para n = 2500
+Burbujeo: 0.016082 segundos
+Seleccion: 0.006066 segundos
+Insercion: 0.002986 segundos
+Shell: 0.000280 segundos
+QuickSort: 0.000220 segundos
+```
+
+Run the utility-generator check:
+
+```bash
+make test
+```
+
+Remove generated executables:
+
+```bash
+make clean
+```
+
+## Results at a glance
+
+The complete measurement tables and charts are available in [the report](<Análisis de algoritmos de ordenamiento.pdf>). The table below highlights the random-input run at `n = 150,000`.
+
+| Algorithm | Time (seconds) |
+| --- | ---: |
+| Bubble sort | 88.994592 |
+| Selection sort | 23.829920 |
+| Insertion sort | 13.448955 |
+| Shell sort | 0.037259 |
+| QuickSort | 0.020236 |
+
+```mermaid
+xychart-beta
+    title "Random input: faster algorithms"
+    x-axis "Array size (n)" [25000, 70000, 120000, 150000]
+    y-axis "CPU time (seconds)" 0 --> 0.045
+    line "Shell sort" [0.004321, 0.014473, 0.041278, 0.037259]
+    line "QuickSort" [0.002540, 0.008079, 0.023884, 0.020236]
+```
+
+The chart intentionally focuses on Shell sort and QuickSort: plotting all algorithms on the same linear axis would make the faster results unreadable. See the report for the full set of charts and the discussion of measurement variability.
+
+## Key findings
+
+- Bubble and Selection sort exhibit the expected quadratic growth and become impractical for large arrays.
+- Insertion sort is extremely effective on already sorted input, but degrades on random or reverse-ordered arrays.
+- QuickSort is fastest on average with balanced partitions, but choosing the final element as the pivot exposes its quadratic worst case on ordered input.
+- Shell sort was consistently fast in these experiments, while its theoretical worst-case behaviour remains dependent on the selected gap sequence.
+
+## Reproducing the original compilation command
+
+```bash
+gcc -std=c11 -Wall -Wextra -Wpedantic -O2 -Iinclude src/*.c -o bin/main
+```
+
+## License
+
+Released under the [MIT License](LICENSE).
