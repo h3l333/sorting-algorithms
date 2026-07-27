@@ -1,16 +1,24 @@
+# A workflow is an automated process defined by a .yml file that instructs GitHub Actions
+# to complete a sequence of steps when a specific event occurs in a repo.
+# It automates: - Code build (human-readable code -> executable files)
+#               - Code testing
+#               - Deployment
 name: CI
 
-on:
+on: # "on" defines the triggers/events that start the workflow
   push:
-    branches: [main]
+    branches: [main] # "branches: [main]" acts as a filter on the push event
   pull_request:
 
-jobs:
+jobs: # Job identifier
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Virtual machine OS hosted by GitHub
     steps:
+      # Step 1: Downloads a copy of the repository code into the runner
       - uses: actions/checkout@v4
+      # Step 2: Compiles the project using the Makefile
       - name: Build
         run: make
+      # Step 3: Executes the test suite
       - name: Run tests
         run: make test

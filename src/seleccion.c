@@ -26,7 +26,8 @@ void ordenamientoSeleccion(int arr[], int n) {
     }
 
     // Muevo el minimo elemento a su posicion correcta.
-    int temp = arr[i]; // Asigno a una variable temporal el valor en i para no "perderlo".
+    int temp = arr[i]; // Asigno a una variable temporal el valor en i para no
+                       // "perderlo".
     arr[i] = arr[minIndice];
     arr[minIndice] = temp;
   }

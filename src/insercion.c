@@ -12,7 +12,8 @@ void ordenamientoInsercion(int arr[], int n) {
       // modo de ordenar el vector. "Retrocedemos" con j hasta encontrar
       // la posicion correcta.
     }
-    arr[j + 1] = valorAInsertar; 
-    // Recien al llegar a la pos. correcta insertamos el valor de manera ordenada.
+    arr[j + 1] = valorAInsertar;
+    // Recien al llegar a la pos. correcta insertamos el valor de manera
+    // ordenada.
   }
 }
