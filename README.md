@@ -28,6 +28,8 @@ tests/      Utility-generator check and sorting correctness tests
 bin/        Build output (generated; ignored by Git)
 Análisis de algoritmos de ordenamiento.pdf
             Full report: methodology, results, charts, and conclusions
+Análisis de algoritmos de ordenamiento.md
+            Markdown transcription of the report (charts omitted; see the PDF for those)
 ```
 
 ## Requirements
@@ -71,7 +73,7 @@ make clean
 
 ## Results at a glance
 
-The complete measurement tables and charts are available in [the report](<Análisis de algoritmos de ordenamiento.pdf>). The table below highlights the random-input run at `n = 150,000`.
+The complete measurement tables and charts are available in [the Markdown transcription of the original report](<Análisis de algoritmos de ordenamiento.md>) (charts omitted). The table below highlights the random-input run at `n = 150,000`.
 
 | Algorithm      | Time (seconds) |
 | -------------- | -------------: |
@@ -80,17 +82,6 @@ The complete measurement tables and charts are available in [the report](<Análi
 | Insertion sort |      13.448955 |
 | Shell sort     |       0.037259 |
 | QuickSort      |       0.020236 |
-
-```mermaid
-xychart-beta
-    title "Random input: faster algorithms"
-    x-axis "Array size (n)" [25000, 70000, 120000, 150000]
-    y-axis "CPU time (seconds)" 0 --> 0.045
-    line "Shell sort" [0.004321, 0.014473, 0.041278, 0.037259]
-    line "QuickSort" [0.002540, 0.008079, 0.023884, 0.020236]
-```
-
-The chart intentionally focuses on Shell sort and QuickSort: plotting all algorithms on the same linear axis would make the faster results unreadable. See the report for the full set of charts and the discussion of measurement variability.
 
 ## Key findings
 
