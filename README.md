@@ -26,6 +26,9 @@ src/        Sorting algorithms, utilities, and benchmark program
 tests/      Utility-generator check and sorting correctness tests
 .github/    GitHub Actions CI workflow
 bin/        Build output (generated; ignored by Git)
+Dockerfile  Multi-stage build for running the benchmark in a container, no local toolchain needed
+.dockerignore
+            Excludes bin/, .git/, tests/, and docs from the Docker build context
 Análisis de algoritmos de ordenamiento.pdf
             Full report: methodology, results, charts, and conclusions
 Análisis de algoritmos de ordenamiento.md
@@ -37,7 +40,7 @@ Análisis de algoritmos de ordenamiento.md
 - A C compiler with C11 support, such as GCC or Clang
 - GNU Make
 
-The commands below are written for Linux, macOS, or WSL. On Windows, WSL is the simplest way to use the provided Makefile.
+The commands below are written for Linux, macOS, or WSL. On Windows, WSL is the simplest way to use the provided Makefile. Alternatively, use [Docker](#running-with-docker) and skip installing a toolchain entirely.
 
 ## Build and run
 
@@ -69,6 +72,17 @@ Remove generated executables:
 
 ```bash
 make clean
+```
+
+## Running with Docker
+
+No local compiler needed. The included `Dockerfile` is a multi-stage build: it compiles with `gcc:13-bookworm`, then copies only the resulting binary into a `debian:bookworm-slim` runtime image (~114 MB, no compiler included).
+
+```bash
+docker build -t sorting-algorithms .
+docker run --rm sorting-algorithms 1   # best case
+docker run --rm sorting-algorithms 2   # average/random case (default if no argument is given)
+docker run --rm sorting-algorithms 3   # worst case
 ```
 
 ## Results at a glance
